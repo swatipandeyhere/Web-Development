@@ -1,4 +1,5 @@
 const http = require('http');
+const fs = require('fs');
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -14,7 +15,12 @@ const server = http.createServer((request, response) => {
     ]
 
     if (request.method === 'GET' && request.url === '/') {
-        // Write your code here
+        response.writeHead(200, { 'Content-Type': 'text/html' });
+        let html = fs.readFileSync(`${__dirname}/index.html`, 'utf-8');
+        html = html.replace("{{name}}", name);
+        const labList = labs.map((lab) => `<li>${lab}</li>`).join('\n');
+        html = html.replace("{{lab}}", labList);
+        response.end(html);
     }
     else {
         response.writeHead(404, { 'Content-Type': 'text/html' });
