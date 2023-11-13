@@ -43,3 +43,29 @@ exports.createComment = async (req, res) => {
         )
     }
 }
+
+exports.getAllComments = async (req, res) => {
+    try {
+        const { post } = req.body;
+
+        const comments = await Comment.find({ post: post });
+
+        res.status(200).json(
+            {
+                success: true,
+                data: comments,
+                message: 'Comments Fetched Successfully'
+            }
+        )
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json(
+            {
+                success: false,
+                data: 'Internal Server Error',
+                message: error.message
+            }
+        )
+    }
+}
