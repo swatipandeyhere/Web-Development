@@ -42,3 +42,34 @@ exports.likePost = async (req, res) => {
         )
     }
 }
+
+exports.unlikePost = async (req, res) => {
+    try {
+        // Fetch data from Request Body
+        const { post, like } = req.body;
+
+        // Find and Delete the first matching like
+        const deletedLike = await Like.findOneAndDelete({ post: post, _id: like });
+
+        // Update the Post Collection
+        const updatedPost = await Post.findByIdAndUpdate(post, { $pull: { likes: deletedLike._id } }, { new: true });
+
+        res.status(200).json(
+            {
+                success: true,
+                data: updatedPost,
+                message: 'Like Removed Successfully'
+            }
+        )
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json(
+            {
+                success: false,
+                data: 'Internal Server Error',
+                message: error.message
+            }
+        )
+    }
+}
